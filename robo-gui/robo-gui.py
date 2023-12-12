@@ -1,7 +1,10 @@
+import pathlib
 import tkinter
 
 import customtkinter
-from view import *
+import utilities.settings as settings
+from utilities.log_helper import Logger
+from view import SettingsView
 
 customtkinter.set_appearance_mode(
     "System"
@@ -18,8 +21,8 @@ class App(customtkinter.CTk):
 
     def __init__(self, test: bool = False):
         super().__init__()
-        # self.__init_settings()
-
+        self.logger = Logger()
+        self.__init_settings()
         if not test:
 
             self.build_ui()
@@ -113,15 +116,17 @@ class App(customtkinter.CTk):
             self, label_text="Backup Jobs"
         )
         self.scrollable_frame.grid(
-            row=0, rowspan=3, column=2, padx=(20, 0), pady=(20, 20), sticky="nsew"
+            row=0, rowspan=3, column=2, padx=(20, 0), pady=(20, 20),
+            sticky="nsew"
         )
         self.scrollable_frame.grid_columnconfigure(0, weight=1)
         self.scrollable_frame_switches = []
-        for i in range(100):
+        for i, value in enumerate(self.backup_options):
             switch = customtkinter.CTkSwitch(
-                master=self.scrollable_frame, text=f"CTkSwitch {i}"
+                master=self.scrollable_frame, text=f"{value}"
             )
-            switch.grid(row=i, column=0, padx=10, pady=(0, 20))
+            switch.select()
+            switch.grid(row=i, column=0, padx=10, pady=(0, 20), sticky="w")
             self.scrollable_frame_switches.append(switch)
 
         # ============ set default values ============
@@ -132,7 +137,7 @@ class App(customtkinter.CTk):
         # self.scaling_optionemenu.set("100%")
         self.textbox.insert(
             "0.0",
-            "Log\n\n"
+            f"{self.logger.get_log()}"
         )
 
     def change_scaling_event(self, new_scaling: str):
@@ -142,7 +147,25 @@ class App(customtkinter.CTk):
     def sidebar_button_event(self):
         print("sidebar_button click")
 
+    # ============ Settings Init ============
+    def __init_settings(self):
+        """
+        Initializes the settings for the application.
+        """
+
+        self.logger.add_to_log("Initializing settings...")
+        print(self.logger.get_log())
+        try:
+            self.backup_options = settings.load_json(
+                pathlib.Path(__file__).parent.resolve().joinpath(
+                    "config", "backup_options.json"))["checkbox_values"]
+            log = "Settings loaded successfully."
+            print(log)
+        except FileNotFoundError as e:
+            log = f"Error: {e}"
+            print(log)
     # ============ Button Handlers ============
+
     def __on_settings_clicked(self):
         window = customtkinter.CTkToplevel(master=self)
         window.geometry("540x287")
