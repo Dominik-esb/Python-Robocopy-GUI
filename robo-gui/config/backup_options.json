@@ -1,0 +1,31 @@
+{
+    "checkbox_values": [
+      "AD Export",
+      "ApplSupportHaensel",
+      "APSSpecial",
+      "Client",
+      "ClientTechNetC-Wriedt",
+      "ClientTechNetC-Wriedt-2",
+      "ConsumerService",
+      "ConsumerService-2",
+      "CorporateAuditing",
+      "CyberSecurity",
+      "DBA",
+      "DC_Management",
+      "Exchange",
+      "ITProcesses",
+      "ITProcesses2",
+      "LicenseBSS SW",
+      "LicenseBSS SAP",
+      "License1",
+      "License2tesa",
+      "Netzwerk",
+      "SAP Basis",
+      "SCCM",
+      "SDBDFPlans",
+      "SLAPlan",
+      "UnifiedCommunication",
+      "VMWare",
+      "devTest"
+    ]
+  }  
