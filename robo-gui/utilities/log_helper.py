@@ -17,6 +17,9 @@ class Logger:
         self.log_directory = log_directory
         self.logfile = self._generate_logfile_name()
 
+        self.timestamp = None
+        self.log_entry = None
+
     def _generate_logfile_name(self):
         if not os.path.exists(self.log_directory):
             os.makedirs(self.log_directory)
@@ -31,9 +34,11 @@ class Logger:
 
     def add_to_log(self, message):
         """adds a message to the logfile"""
+
+        self.timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.log_entry = f"{self.timestamp} - {message}\n"
         with open(self.logfile, "a", encoding="utf-8") as file:
-            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            file.write(f"{timestamp}: {message}\n")
+            file.write(self.log_entry)
 
     def get_log(self):
         """returns the logfile as a string"""
