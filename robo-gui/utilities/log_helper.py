@@ -1,4 +1,4 @@
-# logger_module.py
+"""This module handles the logfile"""
 
 import datetime
 import os
@@ -6,9 +6,14 @@ import pathlib
 
 
 class Logger:
-    def __init__(self, log_directory=pathlib.Path(__file__).parent.resolve()
-                 .joinpath(
-            "utilities", "logs")):
+    """This class handles the logfile"""
+
+    def __init__(
+        self,
+        log_directory=pathlib.Path(__file__)
+        .parent.resolve()
+        .joinpath("utilities", "logs"),
+    ):
         self.log_directory = log_directory
         self.logfile = self._generate_logfile_name()
 
@@ -16,21 +21,24 @@ class Logger:
         if not os.path.exists(self.log_directory):
             os.makedirs(self.log_directory)
 
-        timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+        timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         return os.path.join(self.log_directory, f"logfile_{timestamp}.txt")
 
     def create_initial_logfile(self):
-        with open(self.logfile, 'w') as file:
+        """creates the initial logfile"""
+        with open(self.logfile, "w", encoding="utf-8") as file:
             file.write("Initial Logfile\n")
 
     def add_to_log(self, message):
-        with open(self.logfile, 'a') as file:
-            timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        """adds a message to the logfile"""
+        with open(self.logfile, "a", encoding="utf-8") as file:
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             file.write(f"{timestamp}: {message}\n")
 
     def get_log(self):
+        """returns the logfile as a string"""
         try:
-            with open(self.logfile, 'r') as file:
+            with open(self.logfile, "r", encoding="utf-8") as file:
                 return file.read()
         except FileNotFoundError as e:
-            return "Log file not found."
+            return f"Log file not found: {e}"
