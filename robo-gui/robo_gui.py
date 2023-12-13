@@ -8,7 +8,7 @@ import pathlib
 import customtkinter
 from utilities import settings
 from utilities.log_helper import Logger
-from view import SettingsView
+from view import *
 
 # import tkinter
 
@@ -35,6 +35,7 @@ class App(customtkinter.CTk):
         self.__init_settings()
         if not test:
             self.build_ui()
+            self.set_default_values()
 
     def build_ui(self):
         """builds the user interface"""
@@ -50,6 +51,11 @@ class App(customtkinter.CTk):
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure((2, 3), weight=0)
         self.grid_rowconfigure((0, 1, 2), weight=1)
+
+        self.tab_view = MyTabView(master=self)
+        self.tab_view.grid(
+            row=3, column=0, columnspan=4, padx=20, pady=(0, 20), sticky="nsew"
+        )
 
         # ============ create sidebar frame with widgets ============
         self.sidebar_frame = customtkinter.CTkFrame(
@@ -157,6 +163,9 @@ class App(customtkinter.CTk):
             self.scrollable_frame_switches.append(switch)
 
         # ============ set default values ============
+
+    def set_default_values(self):
+        """sets the default values for the application"""
         self.sidebar_button_start.configure(text="Start Copy")
         self.sidebar_button_stop.configure(text="Stop Copy")
         self.scrollable_frame_switches[0].select()
@@ -180,18 +189,18 @@ class App(customtkinter.CTk):
         """
 
         self.logger.add_to_log("Initializing settings...")
-        print(self.logger.get_log())
         try:
             self.backup_options = settings.load_json(
                 pathlib.Path(__file__)
                 .parent.resolve()
                 .joinpath("config", "backup_options.json")
             )["checkbox_values"]
-            log = "Settings loaded successfully."
-            print(log)
+            self.logger.add_to_log("Settings initialized successfully.")
         except FileNotFoundError as e:
-            log = f"Error: {e}"
-            print(log)
+            self.logger.add_to_log(
+                "Settings file not found. Please check your installation."
+                + str(e)
+            )
 
     # ============ Button Handlers ============
 
