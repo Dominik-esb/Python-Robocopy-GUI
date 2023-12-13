@@ -54,7 +54,11 @@ class App(customtkinter.CTk):
 
         self.tab_view = MyTabView(master=self)
         self.tab_view.grid(
-            row=3, column=0, columnspan=4, padx=20, pady=(0, 20), sticky="nsew"
+            row=0,
+            column=1,
+            padx=(20, 0),
+            pady=(20, 0),
+            sticky="nsew",
         )
 
         # ============ create sidebar frame with widgets ============
@@ -116,29 +120,13 @@ class App(customtkinter.CTk):
         # ============ create textbox ============
         self.textbox = customtkinter.CTkTextbox(self, width=250)
         self.textbox.grid(
-            row=0,
+            row=1,
             column=1,
             rowspan=2,
             padx=(20, 0),
             pady=(20, 0),
             sticky="nsew",
         )
-
-        # ============ create tabview ============
-        self.scrollable_frame_test = customtkinter.CTkFrame(
-            self, width=140, corner_radius=0
-        )
-        self.scrollable_frame_test.grid(
-            row=2, column=1, padx=(20, 0), pady=(20, 20), sticky="nsew"
-        )
-        self.scrollable_frame_test.grid_columnconfigure(0, weight=1)
-        self.scrollable_frame_test_switches = []
-        for i in range(3):
-            switch = customtkinter.CTkSwitch(
-                master=self.scrollable_frame_test, text=f"CTkSwitch {i}"
-            )
-            switch.grid(row=i, column=0, padx=10, pady=(0, 20))
-            self.scrollable_frame_test_switches.append(switch)
 
         # ============ create scrollable frame ============
         self.scrollable_frame = customtkinter.CTkScrollableFrame(
