@@ -1,10 +1,17 @@
+"""
+This module contains the main application class for the Robocopy GUI.
+It provides a graphical user interface for configuring and running
+Robocopy backup jobs.
+"""
 import pathlib
-import tkinter
 
 import customtkinter
-import utilities.settings as settings
+from utilities import settings
 from utilities.log_helper import Logger
 from view import SettingsView
+
+# import tkinter
+
 
 customtkinter.set_appearance_mode(
     "System"
@@ -15,19 +22,22 @@ customtkinter.set_default_color_theme(
 
 
 class App(customtkinter.CTk):
+    """Main application class."""
+
     WIDTH = 1100
     HEIGHT = 580
     DEFAULT_GRAY = ("gray50", "gray30")
 
     def __init__(self, test: bool = False):
+        """initializes the application"""
         super().__init__()
         self.logger = Logger()
         self.__init_settings()
         if not test:
-
             self.build_ui()
 
     def build_ui(self):
+        """builds the user interface"""
         # ============ configure window ============
         self.title("Robocopy GUI")
         self.geometry(f"{App.WIDTH}x{App.HEIGHT}")
@@ -43,7 +53,8 @@ class App(customtkinter.CTk):
 
         # ============ create sidebar frame with widgets ============
         self.sidebar_frame = customtkinter.CTkFrame(
-            self, width=140, corner_radius=0)
+            self, width=140, corner_radius=0
+        )
         self.sidebar_frame.grid(row=0, column=0, rowspan=4, sticky="nsew")
         self.sidebar_frame.grid_rowconfigure(4, weight=1)
 
@@ -55,14 +66,18 @@ class App(customtkinter.CTk):
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
 
         self.sidebar_button_start = customtkinter.CTkButton(
-            self.sidebar_frame, command=self.sidebar_button_event,
-            fg_color="#017550", hover_color="#014f42",
+            self.sidebar_frame,
+            command=self.sidebar_button_event,
+            fg_color="#017550",
+            hover_color="#014f42",
         )
         self.sidebar_button_start.grid(row=1, column=0, padx=20, pady=10)
 
         self.sidebar_button_stop = customtkinter.CTkButton(
-            self.sidebar_frame, command=self.sidebar_button_event,
-            fg_color="#7e0030", hover_color="#60002d",
+            self.sidebar_frame,
+            command=self.sidebar_button_event,
+            fg_color="#7e0030",
+            hover_color="#60002d",
         )
         self.sidebar_button_stop.grid(row=2, column=0, padx=20, pady=10)
 
@@ -76,7 +91,8 @@ class App(customtkinter.CTk):
             command=self.__on_settings_clicked,
         )
         self.sidebar_button_settings.grid(
-            row=8, column=0, padx=20, pady=(10, 20))
+            row=8, column=0, padx=20, pady=(10, 20)
+        )
 
         self.scaling_label = customtkinter.CTkLabel(
             self.sidebar_frame, text="Settings menue:", anchor="w"
@@ -93,12 +109,19 @@ class App(customtkinter.CTk):
 
         # ============ create textbox ============
         self.textbox = customtkinter.CTkTextbox(self, width=250)
-        self.textbox.grid(row=0, column=1, rowspan=2, padx=(
-            20, 0), pady=(20, 0), sticky="nsew")
+        self.textbox.grid(
+            row=0,
+            column=1,
+            rowspan=2,
+            padx=(20, 0),
+            pady=(20, 0),
+            sticky="nsew",
+        )
 
         # ============ create tabview ============
         self.scrollable_frame_test = customtkinter.CTkFrame(
-            self, width=140, corner_radius=0)
+            self, width=140, corner_radius=0
+        )
         self.scrollable_frame_test.grid(
             row=2, column=1, padx=(20, 0), pady=(20, 20), sticky="nsew"
         )
@@ -116,8 +139,12 @@ class App(customtkinter.CTk):
             self, label_text="Backup Jobs"
         )
         self.scrollable_frame.grid(
-            row=0, rowspan=3, column=2, padx=(20, 0), pady=(20, 20),
-            sticky="nsew"
+            row=0,
+            rowspan=3,
+            column=2,
+            padx=(20, 0),
+            pady=(20, 20),
+            sticky="nsew",
         )
         self.scrollable_frame.grid_columnconfigure(0, weight=1)
         self.scrollable_frame_switches = []
@@ -135,16 +162,15 @@ class App(customtkinter.CTk):
         self.scrollable_frame_switches[0].select()
         self.scrollable_frame_switches[4].select()
         # self.scaling_optionemenu.set("100%")
-        self.textbox.insert(
-            "0.0",
-            f"{self.logger.get_log()}"
-        )
+        self.textbox.insert("0.0", f"{self.logger.get_log()}")
 
     def change_scaling_event(self, new_scaling: str):
+        """changes the scaling of the application"""
         new_scaling_float = int(new_scaling.replace("%", "")) / 100
         customtkinter.set_widget_scaling(new_scaling_float)
 
     def sidebar_button_event(self):
+        """handles the click event of the sidebar button"""
         print("sidebar_button click")
 
     # ============ Settings Init ============
@@ -157,16 +183,20 @@ class App(customtkinter.CTk):
         print(self.logger.get_log())
         try:
             self.backup_options = settings.load_json(
-                pathlib.Path(__file__).parent.resolve().joinpath(
-                    "config", "backup_options.json"))["checkbox_values"]
+                pathlib.Path(__file__)
+                .parent.resolve()
+                .joinpath("config", "backup_options.json")
+            )["checkbox_values"]
             log = "Settings loaded successfully."
             print(log)
         except FileNotFoundError as e:
             log = f"Error: {e}"
             print(log)
+
     # ============ Button Handlers ============
 
     def __on_settings_clicked(self):
+        """handles the click event of the settings button"""
         window = customtkinter.CTkToplevel(master=self)
         window.geometry("540x287")
         window.title("Settings")
@@ -177,10 +207,12 @@ class App(customtkinter.CTk):
 
     # ============ Misc Handlers ============
 
-    def on_closing(self, event=0):
+    def on_closing(self):
+        """handles the closing event of the application"""
         self.destroy()
 
     def start(self):
+        """starts the application"""
         self.mainloop()
 
 
