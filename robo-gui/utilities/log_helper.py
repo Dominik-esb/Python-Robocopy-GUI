@@ -1,26 +1,45 @@
-"""This module handles the logfile"""
-
+"""module handling the logging"""
 import datetime
 import os
 import pathlib
 
+# pylint: disable=import-error
+
 
 class Logger:
-    """This class handles the logfile"""
+    """Logger class"""
+
+    _instance = None
+    _initialized = False
+
+    def __new__(cls, *args, **kwargs):
+        """creates a new instance of the Logger class"""
+        if cls._instance is None:
+            cls._instance = super(Logger, cls).__new__(cls)
+            cls._instance._initialized = False
+        return cls._instance
 
     def __init__(
         self,
+        tab_view,
         log_directory=pathlib.Path(__file__)
         .parent.resolve()
         .joinpath("utilities", "logs"),
     ):
+        """initializes the Logger class"""
+
+        if self._initialized:
+            return
+        self._initialized = True
+
         self.log_directory = log_directory
         self.logfile = self._generate_logfile_name()
-
+        self.tab_view = tab_view
         self.timestamp = None
         self.log_entry = None
 
     def _generate_logfile_name(self):
+        """generates the logfile name"""
         if not os.path.exists(self.log_directory):
             os.makedirs(self.log_directory)
 
@@ -37,8 +56,12 @@ class Logger:
 
         self.timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.log_entry = f"{self.timestamp} - {message}\n"
-        with open(self.logfile, "a", encoding="utf-8") as file:
-            file.write(self.log_entry)
+        self.tab_view.update_log(self.log_entry)
+        try:
+            with open(self.logfile, "a", encoding="utf-8") as file:
+                file.write(self.log_entry)
+        except FileNotFoundError:
+            self.create_initial_logfile()
 
     def get_log(self):
         """returns the logfile as a string"""
