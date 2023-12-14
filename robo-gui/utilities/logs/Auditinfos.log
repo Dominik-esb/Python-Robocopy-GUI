@@ -1,0 +1,53 @@
+-------------------------------------------------------------------------------
+   ROBOCOPY     ::     Robustes Dateikopieren für Windows                              
+-------------------------------------------------------------------------------
+
+  Gestartet: Mittwoch, 13. Dezember 2017 11:56:07
+   Quelle = xyz1
+     Ziel : xyz1
+
+    Dateien : *.pdf
+	    
+  Optionen: /L /DCOPY:DA /COPY:DAT /XO /R:3 /W:5 
+
+------------------------------------------------------------------------------
+
+	                 510	******
+	    Neue Datei		       0	test.pdf
+
+------------------------------------------------------------------------------
+
+           Insgesamt   KopiertšbersprungenKeine šbereinstimmung    FEHLER    Extras
+Verzeich.:         1         0         0         0         0         0
+  Dateien:       510         1       509         0         0         0
+    Bytes:  186.45 m         0  186.45 m         0         0         0
+   Zeiten:   0:00:00   0:00:00                       0:00:00   0:00:00
+   Beendet: Mittwoch, 13. Dezember 2017 11:56:07
+
+
+
+   -------------------------------------------------------------------------------
+   ROBOCOPY     ::     Robustes Dateikopieren für Windows                              
+-------------------------------------------------------------------------------
+
+  Gestartet: Mittwoch, 13. Dezember 2017 11:56:07
+   Quelle = xyz2
+     Ziel : xyz2
+
+    Dateien : *.pdf
+	    
+  Optionen: /L /DCOPY:DA /COPY:DAT /XO /R:3 /W:5 
+
+------------------------------------------------------------------------------
+
+	                 510	******
+	    Neue Datei		       0	test.pdf
+
+------------------------------------------------------------------------------
+
+           Insgesamt   KopiertšbersprungenKeine šbereinstimmung    FEHLER    Extras
+Verzeich.:         1         0         0         0         0         0
+  Dateien:       510         1000       509         0         0         0
+    Bytes:  186.45 m         0  186.45 m         0         0         0
+   Zeiten:   0:00:00   0:00:00                       0:00:00   0:00:00
+   Beendet: Mittwoch, 13. Dezember 2017 11:56:07
