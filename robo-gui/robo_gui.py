@@ -6,9 +6,9 @@ Robocopy backup jobs.
 import pathlib
 
 import customtkinter
-from utilities import settings
-from utilities.log_helper import Logger
-from view import *
+from utilities.json_handler import JasonHandler  # pylint: disable=import-error
+from utilities.log_helper import Logger  # pylint: disable=import-error
+from view import *  # pylint: disable=import-error
 
 # import tkinter
 
@@ -31,7 +31,10 @@ class App(customtkinter.CTk):
     def __init__(self, test: bool = False):
         """initializes the application"""
         super().__init__()
-        self.logger = Logger()
+
+        self.tab_view = TabView(master=self)
+        self.logger = Logger(self.tab_view)
+
         self.__init_settings()
         if not test:
             self.build_ui()
@@ -50,14 +53,14 @@ class App(customtkinter.CTk):
         # ============ configure grid layout (4x4) ============
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure((2, 3), weight=0)
-        self.grid_rowconfigure((0, 1, 2), weight=1)
+        self.grid_rowconfigure((0, 1), weight=1)
 
-        self.tab_view = MyTabView(master=self)
         self.tab_view.grid(
             row=0,
+            rowspan=2,
             column=1,
-            padx=(20, 0),
-            pady=(20, 0),
+            padx=(20, 20),
+            pady=(20, 20),
             sticky="nsew",
         )
 
@@ -118,37 +121,37 @@ class App(customtkinter.CTk):
         # pady=(10, 20))
 
         # ============ create textbox ============
-        self.textbox = customtkinter.CTkTextbox(self, width=250)
-        self.textbox.grid(
-            row=1,
-            column=1,
-            rowspan=2,
-            padx=(20, 0),
-            pady=(20, 0),
-            sticky="nsew",
-        )
+        # self.textbox = customtkinter.CTkTextbox(self, width=250)
+        # self.textbox.grid(
+        #     row=1,
+        #     column=1,
+        #     rowspan=2,
+        #     padx=(20, 0),
+        #     pady=(20, 0),
+        #     sticky="nsew",
+        # )
 
         # ============ create scrollable frame ============
-        self.scrollable_frame = customtkinter.CTkScrollableFrame(
-            self, label_text="Backup Jobs"
-        )
-        self.scrollable_frame.grid(
-            row=0,
-            rowspan=3,
-            column=2,
-            padx=(20, 0),
-            pady=(20, 20),
-            sticky="nsew",
-        )
-        self.scrollable_frame.grid_columnconfigure(0, weight=1)
-        self.scrollable_frame_switches = []
-        for i, value in enumerate(self.backup_options):
-            switch = customtkinter.CTkSwitch(
-                master=self.scrollable_frame, text=f"{value}"
-            )
-            switch.select()
-            switch.grid(row=i, column=0, padx=10, pady=(0, 20), sticky="w")
-            self.scrollable_frame_switches.append(switch)
+        # self.scrollable_frame = customtkinter.CTkScrollableFrame(
+        #     self, label_text="Backup Jobs"
+        # )
+        # self.scrollable_frame.grid(
+        #     row=0,
+        #     rowspan=3,
+        #     column=2,
+        #     padx=(20, 0),
+        #     pady=(20, 20),
+        #     sticky="nsew",
+        # )
+        # self.scrollable_frame.grid_columnconfigure(0, weight=1)
+        # self.scrollable_frame_switches = []
+        # for i, value in enumerate(self.backup_options):
+        #     switch = customtkinter.CTkSwitch(
+        #         master=self.scrollable_frame, text=f"{value}"
+        #     )
+        #     switch.select()
+        #     switch.grid(row=i, column=0, padx=10, pady=(0, 20), sticky="w")
+        #     self.scrollable_frame_switches.append(switch)
 
         # ============ set default values ============
 
@@ -156,19 +159,18 @@ class App(customtkinter.CTk):
         """sets the default values for the application"""
         self.sidebar_button_start.configure(text="Start Copy")
         self.sidebar_button_stop.configure(text="Stop Copy")
-        self.scrollable_frame_switches[0].select()
-        self.scrollable_frame_switches[4].select()
         # self.scaling_optionemenu.set("100%")
-        self.textbox.insert("0.0", f"{self.logger.get_log()}")
+        # self.textbox.insert("0.0", f"{self.logger.get_log()}")
 
     def change_scaling_event(self, new_scaling: str):
         """changes the scaling of the application"""
         new_scaling_float = int(new_scaling.replace("%", "")) / 100
         customtkinter.set_widget_scaling(new_scaling_float)
+        self.logger.add_to_log(f"Scaling changed to {new_scaling}")
 
     def sidebar_button_event(self):
         """handles the click event of the sidebar button"""
-        print("sidebar_button click")
+        self.logger.add_to_log("Start Copy clicked")
 
     # ============ Settings Init ============
     def __init_settings(self):
@@ -178,12 +180,14 @@ class App(customtkinter.CTk):
 
         self.logger.add_to_log("Initializing settings...")
         try:
-            self.backup_options = settings.load_json(
+            self.backup_options = JasonHandler.load_json(
                 pathlib.Path(__file__)
                 .parent.resolve()
                 .joinpath("config", "backup_options.json")
             )["checkbox_values"]
+
             self.logger.add_to_log("Settings initialized successfully.")
+
         except FileNotFoundError as e:
             self.logger.add_to_log(
                 "Settings file not found. Please check your installation."
@@ -206,6 +210,7 @@ class App(customtkinter.CTk):
 
     def on_closing(self):
         """handles the closing event of the application"""
+        self.logger.add_to_log("Closing application...")
         self.destroy()
 
     def start(self):
