@@ -170,6 +170,10 @@ class App(customtkinter.CTk):
 
     def sidebar_button_event(self):
         """handles the click event of the sidebar button"""
+
+        for switch in self.tab_view.scrollable_frame_switches:
+            if switch.cget("state"):
+                print(switch.cget("text"))
         self.logger.add_to_log("Start Copy clicked")
 
     # ============ Settings Init ============
