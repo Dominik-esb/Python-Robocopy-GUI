@@ -3,6 +3,8 @@ import pathlib
 
 import customtkinter
 from utilities.json_handler import JasonHandler  # pylint: disable=import-error
+from utilities.smart_handler import Smart  # pylint: disable=import-error
+from view.backup_create_view import BackupCreateView
 
 # from utilities.log_helper import Logger  # pylint: disable=import-error
 
@@ -28,6 +30,8 @@ class TabView(customtkinter.CTkTabview):  # pylint: disable=W0223,R0901
             return
         self._initialized = True
 
+        self.smart = Smart()
+
         self.scrollable_frame = None
         self.scrollable_frame_switches = []
         self.textbox = None
@@ -52,12 +56,14 @@ class TabView(customtkinter.CTkTabview):  # pylint: disable=W0223,R0901
             "Copy", columns=[[1, 2], [0, 0]], rows=[[0, 1], [1, 1]]
         )
         self.configure_tab(
-            "Analysis", columns=[[1, 2], [0, 0]], rows=[[0, 1], [1, 1]]
+            "Analysis", columns=[[0, 1], [0, 0]], rows=[[0, 1], [1, 1]]
         )
 
         self.log_view()
-        self.create_backup_job_list()
-        self.create_switches()
+        self.create_backup_job_frame()
+        self.create_add_backup_job_button()
+        self.create_backup_job_list_switches()
+        self.create_smart_combobopx()
 
     def add_tabs(self, tab_names):
         """adds tabs to the tab view"""
@@ -78,9 +84,11 @@ class TabView(customtkinter.CTkTabview):  # pylint: disable=W0223,R0901
         if rows:
             for row, weight in rows:
                 tab.grid_rowconfigure(row, weight=weight)
+        
+    # ============ Copy Tab ============
 
-    def create_backup_job_list(self):
-        """creates the log view"""
+    def create_backup_job_frame(self):
+        """creates the backup job list"""
         self.scrollable_frame = customtkinter.CTkScrollableFrame(
             self.tab("Copy"), label_text="Backup Jobs"
         )
@@ -89,28 +97,52 @@ class TabView(customtkinter.CTkTabview):  # pylint: disable=W0223,R0901
             rowspan=3,
             column=2,
             padx=(0, 20),
-            pady=(20, 20),
+            pady=(20, 5),
             sticky="nsew",
         )
         self.scrollable_frame.grid_columnconfigure(0, weight=1)
 
-    def create_switches(self):
-        """creates the switches for the log view"""
+    def create_add_backup_job_button(self):
+        """creates add Button"""
+        add_backup_job_button = customtkinter.CTkButton(
+            master=self.tab("Copy"),
+            text="Add Backup Job",
+            command=self.__on_create_back_clicked
+            )
+        add_backup_job_button.grid(
+            row=3,
+            column=2,
+            padx=10,
+            pady=(0, 20),
+            sticky="nsew"
+            )
+
+    def create_backup_job_list_switches(self):
+        """creates switches for backup jobs"""
         for i, value in enumerate(self.backup_job_list):
             switch = customtkinter.CTkSwitch(
                 master=self.scrollable_frame, text=value, width=150
             )
             switch.select()
-            switch.grid(row=i, column=0, padx=10, pady=(0, 20), sticky="w")
+            switch.grid(row=i+1, column=0, padx=10, pady=(0, 20), sticky="w")
             self.scrollable_frame_switches.append(switch)
 
+    def add_backup_job_list_switches(self, name):
+        """adds switches for backup jobs"""
+        switch = customtkinter.CTkSwitch(
+            master=self.scrollable_frame, text=name, width=150
+        )
+        switch.select()
+        switch.grid(row=1, column=0, padx=10, pady=(0, 20), sticky="w")
+        self.scrollable_frame_switches.append(switch)
+
     def log_view(self):
-        """creates the backup job list"""
+        """creates the log view"""
         self.textbox = customtkinter.CTkTextbox(self.tab("Copy"), width=150)
         self.textbox.grid(
             row=1,
             column=1,
-            rowspan=2,
+            rowspan=3,
             padx=(20, 0),
             pady=(20, 20),
             sticky="nsew",
@@ -119,3 +151,26 @@ class TabView(customtkinter.CTkTabview):  # pylint: disable=W0223,R0901
     def update_log(self, message):
         """updates the log"""
         self.textbox.insert("end", f"{message}\n")
+
+    # ============ Analysis Tab ============
+
+    def create_smart_combobopx(self):
+        """creates the smart combobox"""
+        smart_combobox = customtkinter.CTkComboBox(
+            master=self.tab("Analysis"),
+            values=["option 1", "option 2"],
+        )
+        smart_combobox.grid(row=1, column=1, padx=10, pady=(20, 20), sticky="w")
+
+    # ============ Button Handlers ============
+
+    def __on_create_back_clicked(self):
+        """Handle click"""
+        print("__on_create_back_clicked")
+        window = customtkinter.CTkToplevel(master=self)
+        window.geometry("680x487")
+        window.title("Add Backup")
+        view = BackupCreateView(parent=window)
+        view.pack(side="top", fill="both", expand=True, padx=20, pady=20)
+        # Workaround for bug where main window takes focus
+        window.after(100, window.lift)
