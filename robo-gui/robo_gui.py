@@ -173,7 +173,8 @@ class App(customtkinter.CTk):
 
         for switch in self.tab_view.scrollable_frame_switches:
             if switch.cget("state"):
-                print(switch.cget("text"))
+                switch.cget("text")
+                
         self.logger.add_to_log("Start Copy clicked")
 
     # ============ Settings Init ============
