@@ -22,9 +22,7 @@ class Logger:
     def __init__(
         self,
         tab_view,
-        log_directory=pathlib.Path(__file__)
-        .parent.resolve()
-        .joinpath("utilities", "logs"),
+        log_directory=pathlib.Path(__file__).parent.resolve().joinpath("logs"),
     ):
         """initializes the Logger class"""
 
