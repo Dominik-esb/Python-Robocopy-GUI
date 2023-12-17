@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 .vscode/settings.json
 robo-gui/utilities/logs/logfile_*.txt
+robo-gui/settings.pickle
