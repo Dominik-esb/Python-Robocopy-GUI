@@ -84,7 +84,7 @@ class TabView(customtkinter.CTkTabview):  # pylint: disable=W0223,R0901
         if rows:
             for row, weight in rows:
                 tab.grid_rowconfigure(row, weight=weight)
-        
+
     # ============ Copy Tab ============
 
     def create_backup_job_frame(self):
@@ -107,15 +107,11 @@ class TabView(customtkinter.CTkTabview):  # pylint: disable=W0223,R0901
         add_backup_job_button = customtkinter.CTkButton(
             master=self.tab("Copy"),
             text="Add Backup Job",
-            command=self.__on_create_back_clicked
-            )
+            command=self.__on_create_back_clicked,
+        )
         add_backup_job_button.grid(
-            row=3,
-            column=2,
-            padx=10,
-            pady=(0, 20),
-            sticky="nsew"
-            )
+            row=3, column=2, padx=10, pady=(0, 20), sticky="nsew"
+        )
 
     def create_backup_job_list_switches(self):
         """creates switches for backup jobs"""
@@ -124,7 +120,7 @@ class TabView(customtkinter.CTkTabview):  # pylint: disable=W0223,R0901
                 master=self.scrollable_frame, text=value, width=150
             )
             switch.select()
-            switch.grid(row=i+1, column=0, padx=10, pady=(0, 20), sticky="w")
+            switch.grid(row=i + 1, column=0, padx=10, pady=(0, 20), sticky="w")
             self.scrollable_frame_switches.append(switch)
 
     def add_backup_job_list_switches(self, name):
@@ -160,15 +156,16 @@ class TabView(customtkinter.CTkTabview):  # pylint: disable=W0223,R0901
             master=self.tab("Analysis"),
             values=["option 1", "option 2"],
         )
-        smart_combobox.grid(row=1, column=1, padx=10, pady=(20, 20), sticky="w")
+        smart_combobox.grid(
+            row=1, column=1, padx=10, pady=(20, 20), sticky="w"
+        )
 
     # ============ Button Handlers ============
 
     def __on_create_back_clicked(self):
         """Handle click"""
-        print("__on_create_back_clicked")
         window = customtkinter.CTkToplevel(master=self)
-        window.geometry("680x487")
+        window.geometry("954x487")
         window.title("Add Backup")
         view = BackupCreateView(parent=window)
         view.pack(side="top", fill="both", expand=True, padx=20, pady=20)
